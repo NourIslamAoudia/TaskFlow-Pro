@@ -7,6 +7,8 @@ A modern, intelligent task management application built with **Next.js** and **F
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-3-blue?style=for-the-badge&logo=tailwindcss)
 ![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel)
 
+![TaskFlow Pro Screenshot](./screen.png)
+
 ## ✨ Features
 
 - 🔥 **Real-time synchronization** with Firebase
