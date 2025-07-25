@@ -1,10 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import { 
   Plus, Check, Trash2, Edit3, Filter, Calendar, User, Database, 
   Wifi, WifiOff, Star, Clock, TrendingUp, Zap, Moon, Sun,
-  Bell, Search, MoreHorizontal, Archive, RefreshCw
+  Bell, Search, MoreHorizontal, Archive, RefreshCw, Briefcase,
+  BookOpen, Activity, Rocket, AlertTriangle, Target, 
+  CheckCircle, FileText, Timer, AlertCircle
 } from 'lucide-react';
 
 // Firebase imports
@@ -12,7 +15,7 @@ import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push, set, remove, onValue, off } from 'firebase/database';
 import { getAnalytics } from 'firebase/analytics';
 
-// Firebase configuration
+// Firebase configuration from environment variables
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -52,25 +55,25 @@ const TaskManager = () => {
   const [showCompleted, setShowCompleted] = useState(true);
 
   const categories = [
-    { name: 'Work', icon: '💼', color: 'blue' },
-    { name: 'Personal', icon: '👤', color: 'green' },
-    { name: 'Learning', icon: '📚', color: 'purple' },
-    { name: 'Health', icon: '🏃', color: 'red' },
-    { name: 'Projects', icon: '🚀', color: 'orange' }
+    { name: 'Work', icon: Briefcase, color: 'blue' },
+    { name: 'Personal', icon: User, color: 'green' },
+    { name: 'Learning', icon: BookOpen, color: 'purple' },
+    { name: 'Health', icon: Activity, color: 'red' },
+    { name: 'Projects', icon: Rocket, color: 'orange' }
   ];
 
   const priorities = [
-    { value: 'low', label: 'Low Priority', color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200', badge: '🟢' },
-    { value: 'medium', label: 'Medium Priority', color: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200', badge: '🟡' },
-    { value: 'high', label: 'High Priority', color: 'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-200', badge: '🔴' }
+    { value: 'low', label: 'Low Priority', color: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200', icon: CheckCircle },
+    { value: 'medium', label: 'Medium Priority', color: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200', icon: Clock },
+    { value: 'high', label: 'High Priority', color: 'bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-200', icon: AlertTriangle }
   ];
 
   const filterOptions = [
-    { key: 'all', label: 'All Tasks', icon: '📋' },
-    { key: 'today', label: 'Due Today', icon: '⏰' },
-    { key: 'upcoming', label: 'Upcoming', icon: '📅' },
-    { key: 'starred', label: 'Starred', icon: '⭐' },
-    { key: 'overdue', label: 'Overdue', icon: '⚠️' }
+    { key: 'all', label: 'All Tasks', icon: FileText },
+    { key: 'today', label: 'Due Today', icon: Timer },
+    { key: 'upcoming', label: 'Upcoming', icon: Calendar },
+    { key: 'starred', label: 'Starred', icon: Star },
+    { key: 'overdue', label: 'Overdue', icon: AlertCircle }
   ];
 
   // Dark mode toggle
@@ -266,7 +269,7 @@ const TaskManager = () => {
   };
 
   const getCategoryData = (categoryName) => {
-    return categories.find(c => c.name === categoryName) || { icon: '📋', color: 'gray' };
+    return categories.find(c => c.name === categoryName) || { icon: FileText, color: 'gray' };
   };
 
   const isOverdue = (dueDate) => {
@@ -300,7 +303,16 @@ const TaskManager = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900 transition-colors duration-300">
+    <>
+      <Head>
+        <title>TaskFlow Pro - Intelligent Task Manager</title>
+        <meta name="description" content="A modern, Firebase-powered task management application built with Next.js" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#3b82f6" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900 transition-colors duration-300">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         
         {/* Header */}
@@ -438,7 +450,7 @@ const TaskManager = () => {
                       className="p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                     >
                       {priorities.map(p => (
-                        <option key={p.value} value={p.value}>{p.badge} {p.label}</option>
+                        <option key={p.value} value={p.value}>{p.label}</option>
                       ))}
                     </select>
                     
@@ -448,7 +460,7 @@ const TaskManager = () => {
                       className="p-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
                     >
                       {categories.map(cat => (
-                        <option key={cat.name} value={cat.name}>{cat.icon} {cat.name}</option>
+                        <option key={cat.name} value={cat.name}>{cat.name}</option>
                       ))}
                     </select>
                     
@@ -494,20 +506,23 @@ const TaskManager = () => {
                 Filters
               </h3>
               <div className="space-y-2">
-                {filterOptions.map(option => (
-                  <button
-                    key={option.key}
-                    onClick={() => setFilter(option.key)}
-                    className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2 ${
-                      filter === option.key 
-                        ? 'bg-blue-500 text-white shadow-md' 
-                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    <span>{option.icon}</span>
-                    <span className="font-medium">{option.label}</span>
-                  </button>
-                ))}
+                {filterOptions.map(option => {
+                  const IconComponent = option.icon;
+                  return (
+                    <button
+                      key={option.key}
+                      onClick={() => setFilter(option.key)}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-200 flex items-center space-x-2 ${
+                        filter === option.key 
+                          ? 'bg-blue-500 text-white shadow-md' 
+                          : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                      }`}
+                    >
+                      <IconComponent size={16} />
+                      <span className="font-medium">{option.label}</span>
+                    </button>
+                  );
+                })}
               </div>
               
               <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
@@ -556,10 +571,11 @@ const TaskManager = () => {
             <div className="space-y-3">
               {filteredTasks.length === 0 ? (
                 <div className="bg-white dark:bg-gray-800 rounded-2xl p-12 text-center shadow-sm border border-gray-100 dark:border-gray-700">
-                  <div className="text-6xl mb-4">
-                    {filter === 'completed' ? '🎉' : 
-                     filter === 'starred' ? '⭐' : 
-                     filter === 'overdue' ? '✅' : '📝'}
+                  <div className="flex justify-center mb-4">
+                    {filter === 'completed' ? <CheckCircle size={48} className="text-green-500" /> : 
+                     filter === 'starred' ? <Star size={48} className="text-yellow-500" /> : 
+                     filter === 'overdue' ? <CheckCircle size={48} className="text-green-500" /> : 
+                     <FileText size={48} className="text-gray-400" />}
                   </div>
                   <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
                     {filter === 'completed' ? 'No completed tasks yet' : 
@@ -575,6 +591,10 @@ const TaskManager = () => {
               ) : (
                 filteredTasks.map(task => {
                   const categoryData = getCategoryData(task.category);
+                  const CategoryIcon = categoryData.icon;
+                  const priorityData = priorities.find(p => p.value === task.priority);
+                  const PriorityIcon = priorityData?.icon || Clock;
+                  
                   return (
                     <div
                       key={task.id}
@@ -629,12 +649,12 @@ const TaskManager = () => {
                               
                               <div className="flex flex-wrap items-center gap-3">
                                 <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
-                                  {priorities.find(p => p.value === task.priority)?.badge}
-                                  <span className="ml-1">{priorities.find(p => p.value === task.priority)?.label}</span>
+                                  <PriorityIcon size={12} className="mr-1" />
+                                  <span>{priorities.find(p => p.value === task.priority)?.label}</span>
                                 </span>
                                 
                                 <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-${categoryData.color}-100 text-${categoryData.color}-800 dark:bg-${categoryData.color}-900 dark:text-${categoryData.color}-200`}>
-                                  <span className="mr-1">{categoryData.icon}</span>
+                                  <CategoryIcon size={12} className="mr-1" />
                                   {task.category}
                                 </span>
                                 
@@ -738,56 +758,62 @@ const TaskManager = () => {
             </div>
             <div className="flex-1">
               <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-4 flex items-center">
-                <span className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></span>
+                <div className="w-3 h-3 bg-green-500 rounded-full mr-3 animate-pulse"></div>
                 Firebase Connected Successfully!
               </h3>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">✅ Active Features:</h4>
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
+                    <CheckCircle size={16} className="text-green-500 mr-2" />
+                    Active Features:
+                  </h4>
                   <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                       Real-time data synchronization
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                       Cloud data persistence
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                       Multi-device sync capability
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                       Automatic backup & restore
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
                       Analytics & performance monitoring
                     </li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3">🚀 Production Ready:</h4>
+                  <h4 className="font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center">
+                    <Rocket size={16} className="text-blue-500 mr-2" />
+                    Production Ready:
+                  </h4>
                   <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                       Firebase Realtime Database configured
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                       Security rules implemented
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                       Error handling & offline support
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                       Performance optimized
                     </li>
                     <li className="flex items-center">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
                       Ready for deployment
                     </li>
                   </ul>
@@ -796,7 +822,7 @@ const TaskManager = () => {
               
               <div className="mt-6 bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-600">
                 <h5 className="font-medium text-gray-800 dark:text-white mb-2 flex items-center">
-                  <span className="text-green-500 mr-2">🔒</span>
+                  <Target className="text-green-500 mr-2" size={16} />
                   Current Security Rules:
                 </h5>
                 <pre className="text-xs text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg overflow-x-auto">
@@ -809,8 +835,9 @@ const TaskManager = () => {
   }
 }`}
                 </pre>
-                <p className="text-xs text-amber-600 dark:text-amber-400 mt-2">
-                  ⚠️ For production, consider implementing user authentication and more restrictive security rules.
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-2 flex items-center">
+                  <AlertTriangle size={12} className="mr-1" />
+                  For production, consider implementing user authentication and more restrictive security rules.
                 </p>
               </div>
             </div>
@@ -823,12 +850,14 @@ const TaskManager = () => {
             <Zap className="w-4 h-4" />
             <span>Built with Next.js & Firebase</span>
             <span>•</span>
-            <span>Stay productive and organized! 🚀</span>
+            <span>Stay productive and organized!</span>
+            <Rocket className="w-4 h-4" />
           </div>
         </footer>
       </div>
     </div>
-  );
-};
+    </>
+  );    
+}
 
 export default TaskManager;
